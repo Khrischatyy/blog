@@ -33,14 +33,6 @@
                             <input type="text" name="slug" id="slug" class="form-control" value="{{ $item->slug }}">
                         </div>
 
-
-                        <div class="form-group">
-                            <label for="parent_id">
-                                Родитель
-                            </label>
-                            <input type="text" name="parent_id" id="parent_id" class="form-control" value="{{ $item->slug }}">
-                        </div>
-
                         <div class="form-group"><label for="parent_id">Родитель
                             </label>
                             <select name="parent_id" id="parent_id" required class="form-control" placeholder="Выберите категорию">

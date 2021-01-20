@@ -5,6 +5,14 @@
     /** @var \App\Models\BlogCategory $item */
     /** @var \Illuminate\Support\ViewErrorBag $errors */
     @endphp
+    @if($item->exists)
+        <form method="post" action="{{ route('blog.admin.categories.update', $item->id) }}">
+            @method('PATCH')
+            @else
+                <form method="post" action="{{ route('blog.admin.categories.store') }}">
+                    @endif
+
+
     @if ($errors->any())
         <div class="row justify-content-center">
             <div class="col-md-11">
@@ -33,8 +41,7 @@
         </div>
     @else
     @endif
-    <form method="post" action="{{ route('blog.admin.categories.update', $item->id) }}">
-        @method('PATCH')
+
         @csrf
         <div class="container">
             <div class="row justify-content-center">
