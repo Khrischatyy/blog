@@ -5,12 +5,27 @@ namespace App\Http\Controllers\Blog\Admin;
 use App\Http\Requests\BlogCategoryCreateRequest;
 use App\Http\Requests\BlogCategoryUpdateRequest;
 use App\Models\BlogCategory;
+use App\Repositories\BlogCategoryRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Blog\BaseController;
 
 
 class CategoryController extends BaseController
 {
+
+    private $blogCategoryRepository;
+
+    /**
+     * CategoryController constructor.
+     * @param $blogCategoryRepository
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->blogCategoryRepository = app(BlogCategoryRepository::class);
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +34,9 @@ class CategoryController extends BaseController
     public function index()
     {
 
-        $paginator = BlogCategory::paginate(5);
+//        $paginator = BlogCategory::paginate(5);
+
+        $paginator = $this->blogCategoryRepository->getAllWithPaginate(5);
 
         return view('blog.admin.category.index', compact('paginator'));
     }
@@ -32,8 +49,7 @@ class CategoryController extends BaseController
     public function create()
     {
         $item = new BlogCategory();
-        $category_list = BlogCategory::all();
-
+        $category_list = $this->blogCategoryRepository->getForComboBox();
         return view('blog.admin.category.edit', compact('item', 'category_list'));
     }
 
@@ -49,8 +65,9 @@ class CategoryController extends BaseController
         if (empty($data['slug'])) {
             $data['slug'] = str_slug($data['title']);
         }
-        $item = new BlogCategory($data);
-        $item->save();
+
+        $item = (new BlogCategory())->create($data);
+
         if($item) {
             return redirect()->route('blog.admin.categories.edit', $item->id)
                 ->with(['success' => 'Успешно сохранено']);
@@ -72,10 +89,17 @@ class CategoryController extends BaseController
     public function edit($id)
     {
 
-        $item = BlogCategory::findOrFail($id);
-        $category_list = BlogCategory::all();
+//        $item = BlogCategory::findOrFail($id);
+//        $category_list = BlogCategory::all();
 
-        return view('blog.admin.category.edit', compact('item', 'category_list'));
+        $item = $this->blogCategoryRepository->getEdit($id);
+        if(empty($item)){
+            abort(404);
+        }
+        $category_list = $this->blogCategoryRepository->getForComboBox();
+
+        return view('blog.admin.category.edit',
+            compact('item', 'category_list'));
     }
 
     /**
@@ -88,7 +112,10 @@ class CategoryController extends BaseController
     public function update(BlogCategoryUpdateRequest $request, $id)
     {
 
-        $item =  BlogCategory::find($id);
+        //$item =  BlogCategory::find($id);
+
+        $item = $this->blogCategoryRepository->getEdit($id);
+
         if(empty($item)){
             return back()
                 ->withErrors(['msg'=> "Запись id=[{$id}] не найдена"])

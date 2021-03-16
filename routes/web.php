@@ -22,6 +22,12 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+
+Route::get('/test', function () {
+    return 20;
+});
+
+
 Route::group(['namespace' => 'Blog\Admin', 'prefix' => 'admin/blog'], function () {
     Route::resource('categories', 'CategoryController')
         ->only(['index','edit','update','create','store'])
