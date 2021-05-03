@@ -112,8 +112,6 @@ class CategoryController extends BaseController
     public function update(BlogCategoryUpdateRequest $request, $id)
     {
 
-        //$item =  BlogCategory::find($id);
-
         $item = $this->blogCategoryRepository->getEdit($id);
 
         if(empty($item)){
@@ -123,9 +121,7 @@ class CategoryController extends BaseController
         }
         $data = $request->all();
 
-        if (empty($data['slug'])) {
-            $data['slug'] = str_slug($data['title']);
-        }
+
 
         $result = $item->fill($data)->save();
 

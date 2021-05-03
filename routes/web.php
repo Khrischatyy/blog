@@ -14,22 +14,26 @@
 Route::get('/', function () {
     return view('welcome');
 });
-Route::group(['namespace' => 'Blog', 'prefix' => 'blog'], function () {
-    Route::resource('posts', 'PostController')->names('blog.posts');
-});
-
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-
-Route::get('/test', function () {
-    return 20;
+Route::group(['namespace' => 'Blog', 'prefix' => 'blog'], function () {
+    Route::resource('posts', 'PostController')->names('blog.posts');
 });
 
 
-Route::group(['namespace' => 'Blog\Admin', 'prefix' => 'admin/blog'], function () {
+$groupData = [
+    'namespace' => 'Blog\Admin',
+    'prefix' => 'admin/blog'
+];
+
+
+Route::group($groupData, function () {
     Route::resource('categories', 'CategoryController')
         ->only(['index','edit','update','create','store'])
         ->names('blog.admin.categories');
+    Route::resource('posts','PostController')
+        ->except(['show'])
+        ->names('blog.admin.posts');
 });
